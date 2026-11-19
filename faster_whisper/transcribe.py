@@ -1679,6 +1679,11 @@ class WhisperModel:
         for result, text_token in zip(results, text_tokens):
             text_token_probs = result.text_token_probs
             alignments = result.alignments
+            if len(alignments) == 0:
+                # ctranslate2 can return no alignment for a text. The code below
+                # would then raise an IndexError: give this text no words instead.
+                return_list.append([])
+                continue
             text_indices = np.array([pair[0] for pair in alignments])
             time_indices = np.array([pair[1] for pair in alignments])
 
